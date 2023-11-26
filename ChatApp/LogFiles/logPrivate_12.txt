@@ -1,0 +1,2 @@
+{"Id":0,"Content":"hey","Sender":{"Id":2,"NickName":"test2"},"Timestamp":"2023-05-16T23:26:19.2707447Z"}
+{"Id":0,"Content":"hi","Sender":{"Id":1,"NickName":"test1"},"Timestamp":"2023-05-16T23:26:34.5222343Z"}

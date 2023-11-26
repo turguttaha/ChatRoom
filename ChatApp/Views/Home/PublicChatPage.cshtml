@@ -1,0 +1,133 @@
+﻿@model ChatApp.Models.ChatRoom
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+    
+    
+*@
+@{
+
+    TempData["SenderId"] = Model.Sender.Id;
+   
+}
+@{
+    Layout = "~/Views/Shared/_LayoutChat.cshtml";
+}
+<h1 class="h-50"> Public Chat Page</h1>
+<p id="errorBox" class="text-danger"></p>
+<div class="container">
+    <div class="row align-items-start">
+        <div class="col-2">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Users
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="col-10">
+            <div id="chatbox" class=""></div>  
+
+        </div>
+       
+    </div>
+    <form id="sendMessageToPublic">
+        <div class="form-group">
+            <input id="idInput" asp-for="Sender.Id" readonly hidden />
+            <label id="messageLabel" class="control-label" value="Message"></label>
+            <input id="messageInput" class="form-control" minlength="1" required />
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Send" class="btn btn-primary mt-3" id="sendButton" />
+        </div>
+    </form>
+</div>
+
+
+
+<script type="text/javascript">
+    async function getPublicMessages() {
+        $.ajax({
+            type: "GET",
+            url: '/Home/GetPublicMessages',
+
+            success: function (response) {
+                console.log(response);
+
+
+                // Hier gaan we de span met id "statusSpan" ophalen
+                // en de text vervangen met de status.
+
+                // Status krijgen we van de action Message mee.
+                //$("#chatbox").html(response.status);
+                //$("#chatbox").animate({ scrollTop: $(document).height() }, 1);
+                //var = $("#chatbox").scrollHeight();
+                //$("#chatbox").scrollTop(10.000)
+                //$("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
+                var firstWord = response.status.split(" ")[0]
+                if (firstWord === "error") {
+                    $("#errorBox").html(response.status);
+                    // console.log("error")
+
+                }
+                else {
+                    $("#chatbox").html(response.status);
+                    $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
+                }
+            },
+            error: function (response) {
+                // Indien onze request faalt, kunnen we hier een mooie
+                // foutmelding tonen.
+                // In ons geval gaan we een alert tonen op het scherm
+                // (in praktijk moet je dit beter afhandelen!).
+                console.log("Get Messages error");
+
+            }
+        });
+    }
+    async function getChatUsers() {
+        $.ajax({
+            type: "POST",
+            url: '/Home/GetChatUsers',
+            data: { "senderId": $("#idInput").val() },
+            success: function (response) {
+                console.log(response);
+
+
+                // Hier gaan we de span met id "statusSpan" ophalen
+                // en de text vervangen met de status.
+
+                // Status krijgen we van de action Message mee.
+                var firstWord = response.status.split(" ")[0]
+                if (firstWord === "error") {
+                    $("#errorBox").html(response.status);
+                    // console.log("error")
+
+                }
+                else {
+                    $("tbody").html(response.status);
+                }
+                
+
+            },
+            error: function (response) {
+                // Indien onze request faalt, kunnen we hier een mooie
+                // foutmelding tonen.
+                // In ons geval gaan we een alert tonen op het scherm
+                // (in praktijk moet je dit beter afhandelen!).
+                console.log("Get users error");
+
+            }
+        });
+    }
+    //getPublicMessages();
+    setInterval(getPublicMessages, 1000);
+    setInterval(getChatUsers,1000)
+</script>
